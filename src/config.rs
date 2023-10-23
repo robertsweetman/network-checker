@@ -2,12 +2,12 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Config {
-    #[serde(default = "default_web")]
-    pub web_config: Vec<PortConfig>,
-    #[serde(default = "default_app")]
-    pub app_config: Vec<PortConfig>,
-    #[serde(default = "default_db")]
-    pub db_config: Vec<PortConfig>,
+    // #[serde(default = "default_web")]
+    pub web: Vec<PortConfig>,
+    // #[serde(default = "default_app")]
+    pub app: Vec<PortConfig>,
+    // #[serde(default = "default_db")]
+    pub db: Vec<PortConfig>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]

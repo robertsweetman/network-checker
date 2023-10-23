@@ -63,9 +63,9 @@ fn main() {
             let data: Config = serde_json::from_str(&contents).expect("Unable to parse JSON");
         
             let configs = match host_type {
-                "web" => &data.web_config,
-                "app" => &data.app_config,
-                "db" => &data.db_config,
+                "web" => &data.web,
+                "app" => &data.app,
+                "db" => &data.db,
                 _ => unreachable!(),
             };
             
@@ -89,16 +89,16 @@ fn main() {
             let host = default_matches.value_of("HOST").expect("Host is required when using the default config");
     
             let data = Some(Config {
-                web_config: default_web(),
-                app_config: default_app(),
-                db_config: default_db(),
+                web: default_web(),
+                app: default_app(),
+                db: default_db(),
             });
     
             if let Some(config) = data {
                 let configs = match host_type {
-                    "web" => &config.web_config,
-                    "app" => &config.app_config,
-                    "db" => &config.db_config,
+                    "web" => &config.web,
+                    "app" => &config.app,
+                    "db" => &config.db,
                     _ => unreachable!(),
                 };
                 
