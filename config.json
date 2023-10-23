@@ -1,0 +1,28 @@
+{
+    "web": [
+        {
+            "port": "80",
+            "protocol": "tcp"
+        },
+        {
+            "port": "443",
+            "protocol": "tcp"
+        }
+    ],
+    "app": [
+        {
+            "port": "9000",
+            "protocol": "tcp"
+        }
+    ],
+    "db": [
+        {
+            "port": "5432",
+            "protocol": "tcp"
+        },
+        {
+            "port": "6379",
+            "protocol": "tcp"
+        }
+    ]
+}
