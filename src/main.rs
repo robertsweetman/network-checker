@@ -22,8 +22,18 @@ fn main() {
                 .index(2))
             .arg(Arg::with_name("FILE")
                 .help("The config file to use")
-                .required(false)
+                .required(true)
                 .index(3)))
+        .subcommand(App::new("default")
+            .about("Uses the default config")
+            .arg(Arg::with_name("HOST")
+                .help("The host to connect to")
+                .required(true)
+                .index(1))
+            .arg(Arg::with_name("TYPE")
+                .help("The type of the host (web, app, or db)")
+                .required(true)
+                .index(2)))
         .subcommand(App::new("manual")
             .about("Manual input")
             .arg(Arg::with_name("HOST")
@@ -44,54 +54,28 @@ fn main() {
         Some(("config", config_matches)) => {
             let host_type = config_matches.value_of("TYPE").expect("Type is required when using a config file");
             let host = config_matches.value_of("HOST").expect("Host is required when using a config file");
-            // let config_file = config_matches.value_of("FILE").expect("Config file is required when using a config file");
-            let config_file = config_matches.value_of("FILE").unwrap_or("default_config.json");
-            println!("config_file: {:?}", config_file);
-            let data: Option<Config>;
-
-            if std::path::Path::new(config_file).exists() {
-                let mut file = File::open(config_file).expect("Unable to open file");
-                let mut contents = String::new();
-                file.read_to_string(&mut contents).expect("Unable to read file");
-                println!("contents: {:?}", contents);
-                data = serde_json::from_str(&mut contents).expect("Unable to parse JSON");
-                println!("data: {:?}", data);
-            } else {
-                // use default config from config.rs
-                data = Some(Config {
-                    web_config: default_web(),
-                    app_config: default_app(),
-                    db_config: default_db(),
-                });
-            }    
-
-        // if let Some(config) = data {    
-        //     if let Some(configs) = config.get(host_type) {
-        //         for item in configs.as_array().unwrap() {
-        //             let port = item["port"].as_str().unwrap();
-        //             let protocol = item["protocol"].as_str().unwrap();
-
-        //             check_connection(protocol, host, port);
-        //         }
-        //     }
-        // }},
-
-        if let Some(config) = data {
+            let config_file = config_matches.value_of("FILE").expect("Config file is required when using a config file");
+        
+            let mut file = File::open(config_file).expect("Unable to open file");
+            let mut contents = String::new();
+            file.read_to_string(&mut contents).expect("Unable to read file");
+        
+            let data: Config = serde_json::from_str(&contents).expect("Unable to parse JSON");
+        
             let configs = match host_type {
-                "web" => &config.web_config,
-                "app" => &config.app_config,
-                "db" => &config.db_config,
+                "web" => &data.web_config,
+                "app" => &data.app_config,
+                "db" => &data.db_config,
                 _ => unreachable!(),
             };
             
             for item in configs {
                 let port = &item.port;
                 let protocol = &item.protocol;
-
+        
                 check_connection(protocol, host, port);
             }
-
-        }},
+        },
 
         Some(("manual", manual_matches)) => {
             let host = manual_matches.value_of("HOST").expect("Host is required when not using a config file");
@@ -99,6 +83,32 @@ fn main() {
             let protocol = manual_matches.value_of("PROTOCOL").expect("Protocol is required when not using a config file");
 
             check_connection(protocol, host, port);
+        },
+        Some(("default", default_matches)) => {
+            let host_type = default_matches.value_of("TYPE").expect("Type is required when using the default config");
+            let host = default_matches.value_of("HOST").expect("Host is required when using the default config");
+    
+            let data = Some(Config {
+                web_config: default_web(),
+                app_config: default_app(),
+                db_config: default_db(),
+            });
+    
+            if let Some(config) = data {
+                let configs = match host_type {
+                    "web" => &config.web_config,
+                    "app" => &config.app_config,
+                    "db" => &config.db_config,
+                    _ => unreachable!(),
+                };
+                
+                for item in configs {
+                    let port = &item.port;
+                    let protocol = &item.protocol;
+    
+                    check_connection(protocol, host, port);
+                }
+            }
         },
         _ => unreachable!(),
     }
