@@ -1,8 +1,12 @@
-use std::net::TcpStream;
+use std::net::{TcpStream, ToSocketAddrs};
 use std::io::{self, Write};
+use std::time::Duration;
 
 pub fn check_tcp_connection(host: &str, port: &str) {
-    match TcpStream::connect(format!("{}:{}", host, port)) {
+    let addr = format!("{}:{}", host, port);
+    let addrs = addr.to_socket_addrs().unwrap().next().unwrap();
+    let timeout = Duration::new(5, 0);
+    match TcpStream::connect_timeout(&addrs, timeout) {
         Ok(stream) => { // bind the result to `stream`
             writeln!(io::stdout(), "Successfully connected to {}:{}", host, port).unwrap();
             writeln!(io::stdout(), "Stream local address: {:?}", stream.local_addr().unwrap()).unwrap();
@@ -12,6 +16,7 @@ pub fn check_tcp_connection(host: &str, port: &str) {
         }
         Err(e) => {
             writeln!(io::stderr(), "Failed to connect to {}:{}: {}", host, port, e).unwrap();
+            writeln!(io::stderr(), "Timeout was set to {} seconds", timeout.as_secs()).unwrap();
             writeln!(io::stderr(), "Error: {}", e).unwrap();
         }
     }
