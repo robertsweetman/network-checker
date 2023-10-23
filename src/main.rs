@@ -116,7 +116,8 @@ fn main() {
 }
 
 fn check_connection(protocol: &str, host: &str, port: &str) {
-    match protocol {
+    let protocol = protocol.to_lowercase();
+    match protocol.as_str() {
         "tcp" => {
             check_tcp::check_tcp_connection(host, port);
         }
