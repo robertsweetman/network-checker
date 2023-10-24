@@ -11,17 +11,21 @@
     ],
     "app": [
         {
-            "port": "9000",
+            "port": "2109",
+            "protocol": "tcp"
+        },
+        {
+            "port": "45054",
             "protocol": "tcp"
         }
     ],
     "db": [
         {
-            "port": "5432",
+            "port": "1521",
             "protocol": "tcp"
         },
         {
-            "port": "6379",
+            "port": "3872",
             "protocol": "tcp"
         }
     ]

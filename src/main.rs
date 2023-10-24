@@ -2,7 +2,7 @@ use std::fs::File;
 use config::Config;
 use std::io::{self, Write, Read};
 use clap::{Arg, App};
-use config::{default_web, default_app, default_db};
+use config::{default_web, default_app, default_database, default_jumpserver, default_domain, default_loadbalancer};
 
 mod check_tcp;
 mod check_udp;
@@ -65,7 +65,10 @@ fn main() {
             let configs = match host_type {
                 "web" => &data.web,
                 "app" => &data.app,
-                "db" => &data.db,
+                "database" => &data.database,
+                "jumpserver" => &data.jumpserver,
+                "domain" => &data.domain,
+                "loadbalancer" => &data.loadbalancer,
                 _ => unreachable!(),
             };
             
@@ -91,14 +94,20 @@ fn main() {
             let data = Some(Config {
                 web: default_web(),
                 app: default_app(),
-                db: default_db(),
+                database: default_database(),
+                jumpserver: default_jumpserver(),
+                domain: default_domain(),
+                loadbalancer: default_loadbalancer(),
             });
     
             if let Some(config) = data {
                 let configs = match host_type {
                     "web" => &config.web,
                     "app" => &config.app,
-                    "db" => &config.db,
+                    "database" => &config.database,
+                    "jumpserver" => &config.jumpserver,
+                    "domain" => &config.domain,
+                    "loadbalancer" => &config.loadbalancer,
                     _ => unreachable!(),
                 };
                 
